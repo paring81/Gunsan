@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쌍쌍바 모임의 군산 1박 2일 여행 안내장 - 배달의민족 스타일</title>
+    <style>
+        @font-face {
+            font-family: 'BM DOHYEON';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMDOHYEON.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'BM HANNA Pro';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_seven@1.0/BMHANNAPro.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        :root {
+            /* 배달의민족 DESIGN.md 토큰 */
+            --primary: oklch(0.88 0.18 178);          /* 배민 프라이머리 민트 */
+            --primary-hover: oklch(0.69 0.13 184);    /* 버튼 hover/pressed */
+            --primary-tint: oklch(0.97 0.05 178);     /* 옅은 민트 배경 */
+            
+            --navy: oklch(0.30 0.13 286);             /* 헤더/프로모션 딥 네이비 */
+            --navy-tint: oklch(0.94 0.04 287);
+            
+            --red: oklch(0.63 0.24 27);               /* 할인/무료배달 빨강 칩 */
+            --red-tint: oklch(0.94 0.04 27);
+            --orange: oklch(0.71 0.17 32);            /* 쿠폰 티켓 오렌지 */
+            --yellow: oklch(0.93 0.20 100);           /* 포인트/별점 골드 */
+            --pink: oklch(0.66 0.24 4);               /* 배민페이/NEW 핑크 */
+            --pink-tint: oklch(0.95 0.03 4);
+            --frozen: oklch(0.69 0.18 240);           /* 냉동 인디케이터 */
+
+            --bg-page: oklch(0.97 0.00 286);          /* 본화이트 (페이지 배경) */
+            --bg-surface: oklch(1.00 0 0);            /* 카드 표면 (순백) */
+            --bg-subtle: oklch(0.96 0.00 286);        /* 입력/보조 배경 */
+            --bg-inverse: oklch(0.18 0 0);            /* 검정 캡슐 */
+
+            --fg-1: oklch(0.18 0 0);                  /* 주요 텍스트 (near-black) */
+            --fg-2: oklch(0.34 0 0);                  /* 보조 텍스트 */
+            --fg-3: oklch(0.55 0 0);                  /* 3차 텍스트 */
+            --fg-4: oklch(0.71 0 0);                  /* disabled */
+
+            --border-1: oklch(0.94 0.00 286);         /* 기본 디바이더 */
+            --border-2: oklch(0.87 0.00 286);         /* 폼 인풋 보더 */
+            --border-strong: oklch(0.18 0 0);         /* 윤곽선 검정 */
+
+            --font-h1: 'BM DOHYEON', sans-serif;
+            --font-display: 'BM HANNA Pro', sans-serif;
+            --font-body: "Pretendard Variable", Pretendard, -apple-system, sans-serif;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-pill: 9999px;
+
+            --shadow-1: 0 1px 2px oklch(0.18 0 0 / 0.04);
+            --shadow-2: 0 4px 12px oklch(0.18 0 0 / 0.06);
+            --shadow-3: 0 8px 24px oklch(0.18 0 0 / 0.08);
+            --shadow-sticker: 0 6px 0 oklch(0.18 0 0 / 1.0);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-page);
+            color: var(--fg-1);
+            line-height: 1.5;
+            padding: 0 0 40px 0;
+            overflow-x: hidden;
+        }
+
+        /* 성함 입력 커스텀 모달 스타일 */
+        #name-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: oklch(0.18 0 0 / 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--bg-surface);
+            border-radius: var(--radius-xl);
+            padding: 30px 24px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: var(--shadow-3);
+            text-align: center;
+            border: 2px solid var(--border-strong);
+        }
+
+        .modal-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--fg-1);
+        }
+
+        .modal-content p {
+            font-size: 0.95rem;
+            color: var(--fg-2);
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1.05rem;
+            font-family: var(--font-body);
+            border: 2px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            outline: none;
+            margin-bottom: 16px;
+            text-align: center;
+            background-color: var(--bg-subtle);
+            font-weight: 700;
+        }
+
+        .modal-input:focus {
+            background-color: var(--bg-surface);
+            border-color: var(--primary-hover);
+        }
+
+        .modal-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: var(--fg-1);
+            font-family: var(--font-h1);
+            font-size: 1.1rem;
+            padding: 14px;
+            border: 2px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            box-shadow: 0 4px 0 var(--border-strong);
+            transition: all 0.1s ease;
+        }
+
+        .modal-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--border-strong);
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mint-header {
+            background-color: var(--primary);
+            padding: 28px 20px 24px 20px;
+            border-bottom-left-radius: var(--radius-xl);
+            border-bottom-right-radius: var(--radius-xl);
+            box-shadow: var(--shadow-2);
+            margin-bottom: 20px;
+            color: var(--fg-1);
+        }
+
+        .role-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .role-title strong {
+            font-family: var(--font-h1);
+            font-size: 1.4rem;
+        }
+
+        .role-title span {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .badge-club {
+            background-color: var(--fg-1);
+            color: var(--primary);
+            font-family: var(--font-h1);
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: -0.2px;
+        }
+
+        .mint-header h1 {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            line-height: 1.15;
+            margin-bottom: 8px;
+            word-break: keep-all;
+        }
+
+        .mint-header p {
+            font-size: 0.95rem;
+            color: oklch(0.30 0 0);
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            background-color: var(--bg-surface);
+            border-radius: var(--radius-pill);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-1);
+            border: 2px solid var(--border-strong);
+        }
+
+        .search-bar .placeholder {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--fg-2);
+        }
+
+        .search-bar .search-icon {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--fg-1);
+        }
+
+        .service-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 0 16px 20px 16px;
+        }
+
+        .service-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-1);
+            padding: 12px;
+            min-height: 96px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-1);
+        }
+
+        .service-card .title {
+            font-family: var(--font-body);
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: var(--fg-1);
+        }
+
+        .service-card .sub {
+            font-size: 11px;
+            color: var(--fg-3);
+            line-height: 1.3;
+            white-space: pre-line;
+            margin-top: 2px;
+        }
+
+        .service-card .illust-icon {
+            align-self: flex-end;
+            font-size: 1.5rem;
+        }
+
+        .coupon-card-light {
+            margin: 0 16px 20px 16px;
+            background: var(--bg-surface);
+            border: 1.5px solid var(--primary);
+            border-radius: 14px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-1);
+        }
+
+        .coupon-card-light .text-area {
+            font-size: 0.95rem;
+            color: var(--fg-1);
+            font-weight: 600;
+        }
+
+        .coupon-card-light .text-area strong {
+            color: var(--red);
+        }
+
+        .coupon-card-light .ticket {
+            background-color: var(--orange);
+            color: #ffffff;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transform: rotate(-3deg);
+            box-shadow: 2px 3px 0 oklch(0.18 0 0 / 0.12);
+            position: relative;
+        }
+
+        .coupon-card-light .b-coin {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--fg-1);
+            color: var(--primary);
+            font-family: var(--font-h1);
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-bar-scroll {
+            display: flex;
+            background: var(--bg-surface);
+            padding: 8px 16px;
+            margin: 0 16px 20px 16px;
+            border-radius: var(--radius-pill);
+            box-shadow: var(--shadow-1);
+            border: 1px solid var(--border-1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 0;
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            color: var(--fg-3);
+            cursor: pointer;
+            border-radius: var(--radius-pill);
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            background-color: var(--fg-1);
+            color: #ffffff;
+            box-shadow: 0 4px 10px oklch(0.18 0 0 / 0.2);
+        }
+
+        .day-section {
+            display: none;
+            padding: 0 16px;
+        }
+
+        .day-section.active {
+            display: block;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 18px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 15px;
+            bottom: 15px;
+            width: 3px;
+            background-color: var(--border-1);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            background: var(--bg-surface);
+            padding: 18px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-2);
+            border: 1px solid var(--border-1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -19px;
+            top: 22px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            border: 2px solid var(--fg-1);
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .tag-discount {
+            background-color: var(--red);
+            color: #ffffff;
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+        }
+
+        .tag-mint {
+            background-color: var(--primary-tint);
+            color: oklch(0.40 0.07 191);
+            font-weight: 700;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+        }
+
+        .time-badge {
+            display: inline-block;
+            background-color: var(--bg-subtle);
+            color: var(--fg-2);
+            font-family: var(--font-body);
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--fg-1);
+            margin-bottom: 4px;
+        }
+
+        .rating-meta {
+            font-size: 0.88rem;
+            color: var(--fg-2);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .rating-meta .star {
+            color: var(--yellow);
+        }
+
+        .desc {
+            font-size: 0.92rem;
+            color: var(--fg-2);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .place-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background-color: var(--bg-subtle);
+            display: block;
+        }
+
+        .club-mini-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: var(--primary);
+            color: var(--fg-1);
+            font-family: var(--font-h1);
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px oklch(0 0 0 / 0.15);
+        }
+
+        /* 맨 위로 가기 버튼 스타일 */
+        .scroll-top-wrapper {
+            text-align: center;
+            margin: 24px 0 10px 0;
+        }
+
+        .btn-scroll-top {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background-color: var(--bg-surface);
+            color: var(--fg-1);
+            font-family: var(--font-display);
+            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: var(--radius-pill);
+            border: 2px solid var(--border-strong);
+            box-shadow: var(--shadow-2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-scroll-top:active {
+            transform: translateY(2px);
+            box-shadow: var(--shadow-1);
+            background-color: var(--primary-tint);
+        }
+
+        .btn-scroll-top .arrow {
+            font-size: 0.9rem;
+            color: var(--primary-hover);
+        }
+
+        .ad-banner-dark {
+            margin: 20px 16px;
+            background-color: var(--bg-inverse);
+            color: #ffffff;
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-2);
+        }
+
+        .ad-banner-dark .text {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+        }
+
+        .ad-banner-dark .text strong {
+            color: var(--yellow);
+        }
+
+        .ad-banner-dark .btn-action {
+            background-color: var(--primary);
+            color: var(--fg-1);
+            font-family: var(--font-h1);
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            border: none;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--fg-3);
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 성함 입력 커스텀 모달 -->
+<div id="name-modal">
+    <div class="modal-content">
+        <h2>✨ 성함을 입력하세요</h2>
+        <p>쌍쌍바 군산 여행 안내장을 확인하실 분의 성함을 적어주세요!</p>
+        <input type="text" id="modal-name-input" class="modal-input" placeholder="예: 최홍석" autofocus>
+        <button class="modal-btn" onclick="submitName()">확인</button>
+    </div>
+</div>
+
+<!-- 메인 컨테이너 -->
+<div class="container" id="top">
+    <header class="mint-header">
+        <div class="role-title">
+            <strong>고마운분,</strong>
+            <span id="user-name">홍석님</span>
+            <span class="badge-club">배민클럽</span>
+        </div>
+        <h1>🚗 쌍쌍바 모임의 군산 1박 2일 여행 안내장</h1>
+        <p>세상 모든 맛과 감성이 식지 않도록! 알찬 군산 일정</p>
+        
+        <div class="search-bar">
+            <span class="placeholder">군산 맛집 나와라 뚝딱!!</span>
+            <span class="search-icon">🔍</span>
+        </div>
+    </header>
+
+    <div class="service-cards">
+        <div class="service-card">
+            <div>
+                <div class="title">가게배달</div>
+                <div class="sub">군산 맛집 총집합</div>
+            </div>
+            <div class="illust-icon">🍔</div>
+        </div>
+        <div class="service-card">
+            <div>
+                <div class="title">B마트</div>
+                <div class="sub">장보기도 빠르게</div>
+            </div>
+            <div class="illust-icon">🛍️</div>
+        </div>
+        <div class="service-card">
+            <div>
+                <div class="title">배민스토어</div>
+                <div class="sub">여행 필수품 배달</div>
+            </div>
+            <div class="illust-icon">🛒</div>
+        </div>
+    </div>
+
+    <div class="coupon-card-light">
+        <div class="text-area">
+            <span id="coupon-name">홍석</span>님을 위해 준비한 <strong>여행 특가 쿠폰</strong>
+        </div>
+        <div class="ticket">
+            쿠폰
+            <div class="b-coin">B</div>
+        </div>
+    </div>
+
+    <div class="tab-bar-scroll">
+        <button id="tab-btn-1" class="tab-btn active" onclick="switchDay(1, this)">1일 차 (11/7)</button>
+        <button id="tab-btn-2" class="tab-btn" onclick="switchDay(2, this)">2일 차 (11/8)</button>
+    </div>
+
+    <!-- 1일 차 일정 -->
+    <div id="day-1" class="day-section active">
+        <div class="timeline">
+            <div class="timeline-item">
+                <span class="time-badge">07:00 ~ 11:00</span>
+                <div class="title">이동 및 도착 (태성반점)</div>
+                <div class="desc">설레는 마음을 안고 군산으로 출발! 첫 일정 장소인 태성반점으로 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="item-header">
+                    <span class="time-badge">11:00 ~ 12:00</span>
+                    <span class="tag-discount">점심 추천</span>
+                </div>
+                <div class="title">점심식사 (태성반점)</div>
+                <div class="rating-meta">
+                    <span class="star">★</span> <strong>4.9</strong> <span>(리뷰 1,240개) · 중식당</span>
+                </div>
+                <div class="desc">태성반점에서 든든하고 맛있는 짬뽕과 탕수육 요리를 즐깁니다.</div>
+                <div class="image-wrapper">
+                    <img src="%EC%9E%90%EC%9E%A5.jpeg" alt="태성반점 짬뽕과 탕수육" class="place-img" onerror="this.src='https://blog.kakaocdn.net/dna/z1JMm/btrYIcCoy2u/AAAAAAAAAAAAAAAAAAAAAIHFr1pwik0AueG6LTXe02CXirXUEIbThr-YRo9hgdfc/img.jpg?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1793458799&allow_ip=&allow_referer=&signature=YAxdqELZ3My9F%2BI4Sl%2BoTaVC%FtQ%3D'">
+                    <div class="club-mini-badge">배민클럽 가맹점</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">12:00 ~ 12:30</span>
+                <div class="title">이동 (근대역사박물관 주차장)</div>
+                <div class="desc">군산 근대문화 거리 중심인 박물관 주차장으로 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">12:30 ~ 12:40</span>
+                <div class="title">이동 (초원사진관)</div>
+                <div class="desc">영화 '8월의 크리스마스' 촬영지인 초원사진관으로 가볍게 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="item-header">
+                    <span class="time-badge">12:40 ~ 13:10</span>
+                    <span class="tag-mint">포토스팟</span>
+                </div>
+                <div class="title">초원사진관 관람</div>
+                <div class="rating-meta">
+                    <span class="star">★</span> <strong>4.8</strong> <span>(방문자 리뷰 3,500+)</span>
+                </div>
+                <div class="desc">레트로 감성이 가득한 초원사진관 둘러보기 및 인증샷 촬영 시간!</div>
+                <div class="image-wrapper">
+                    <img src="https://www.gunsan.go.kr/www/images/ntour/images/content/img_timeDe9_1.jpg" alt="초원사진관" class="place-img" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">13:10 ~ 13:15</span>
+                <div class="title">이동 (히로쓰가옥)</div>
+                <div class="desc">근처에 위치한 신흥동 일본식 가옥으로 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="item-header">
+                    <span class="time-badge">13:15 ~ 13:30</span>
+                    <span class="tag-mint">근대문화유산</span>
+                </div>
+                <div class="title">히로쓰가옥 관람</div>
+                <div class="desc">일제강점기 근대 가옥의 정원과 건축 양식을 관람합니다.</div>
+                <div class="image-wrapper">
+                    <img src="https://www.gunsan.go.kr/www/images/ntour/images/content/img_timeDe10_1.jpg" alt="히로쓰가옥" class="place-img" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">13:30 ~ 13:40</span>
+                <div class="title">이동 (이성당)</div>
+                <div class="desc">군산 대표 제과점인 이성당으로 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="item-header">
+                    <span class="time-badge">13:40 ~ 14:40</span>
+                    <span class="tag-discount">줄서는 빵집</span>
+                </div>
+                <div class="title">빵 쇼핑 (이성당)</div>
+                <div class="rating-meta">
+                    <span class="star">★</span> <strong>4.9</strong> <span>(전국 최다 단팥빵)</span>
+                </div>
+                <div class="desc">유명한 단팥빵, 야채빵 및 맛있는 베이커리를 여유있게 구매합니다.</div>
+                <div class="image-wrapper">
+                    <img src="%EB%B9%B5.jpeg" alt="이성당 메뉴 추천" class="place-img" onerror="this.src='https://leesungdang1945.cafe24.com/images/logo.png'">
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">14:40 ~ 15:30</span>
+                <div class="title">이동 (선유도리 수원지 공영주차장)</div>
+                <div class="desc">고군산군도의 아름다운 섬, 선유도로 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">15:30 ~ 16:00</span>
+                <div class="title">이동 (장자교스카이워크)</div>
+                <div class="desc">탁 트인 바다 뷰를 품은 장자교스카이워크로 이동합니다.</div>
+                <div class="image-wrapper">
+                    <img src="https://hodabgpnhciikfrpzais.supabase.co/storage/v1/object/public/article-photos/legacy-body/d70fe53cd0ed967581330e84a73994715c715fef.jpg" alt="장자교스카이워크" class="place-img" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="item-header">
+                    <span class="time-badge">16:00 ~ 17:00</span>
+                    <span class="tag-mint">오션뷰 카페</span>
+                </div>
+                <div class="title">휴식 (장자바다정원카페)</div>
+                <div class="rating-meta">
+                    <span class="star">★</span> <strong>4.8</strong> <span>(전망 좋은 카페)</span>
+                </div>
+                <div class="desc">멋진 바다 풍경과 함께 카페에서 오션뷰 휴식을 즐깁니다.</div>
+                <div class="image-wrapper">
+                    <img src="장자바다정원카페.jpeg" alt="장자바다정원 카페 전경" class="place-img" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">17:00 ~ 18:00</span>
+                <div class="title">이동 (탑클라우드호텔)</div>
+                <div class="desc">오늘 하루 묵을 숙소인 탑클라우드호텔로 이동합니다.</div>
+                <div class="image-wrapper">
+                    <img src="https://images.trvl-media.com/lodging/72000000/71070000/71063600/71063598/e0943587.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill" alt="탑클라우드호텔" class="place-img" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">18:00 ~ 18:30</span>
+                <div class="title">체크인</div>
+                <div class="desc">호텔 체크인을 진행하고 짐을 풀어놓습니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">18:30 ~ 18:40</span>
+                <div class="title">이동 (군산생선명가)</div>
+                <div class="desc">저녁 식사를 위해 식당으로 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="item-header">
+                    <span class="time-badge">18:40 ~ 20:00</span>
+                    <span class="tag-discount">저녁 추천</span>
+                </div>
+                <div class="title">저녁식사 (군산생선명가)</div>
+                <div class="rating-meta">
+                    <span class="star">★</span> <strong>4.8</strong> <span>(생선구이 & 찌개 전문)</span>
+                </div>
+                <div class="desc">신선하고 푸짐한 생선구이와 얼큰한 찌개 상차림으로 저녁을 즐깁니다.</div>
+                <div class="image-wrapper">
+                    <img src="%EC%83%9D%EC%84%A0.jpeg" alt="군산생선명가 생선구이 상차림" class="place-img" onerror="this.style.display='none'">
+                    <div class="club-mini-badge">배민클럽 가맹점</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">20:00 ~ (선택)</span>
+                <div class="title">자유 시간</div>
+                <div class="desc">은파호수공원 야경 산책 또는 근처에서 2차 자리를 가집니다.</div>
+            </div>
+
+            <!-- 1일 차 화면 제일 하단: 맨 위로 가기 버튼 -->
+            <div class="scroll-top-wrapper">
+                <button class="btn-scroll-top" onclick="scrollToTop()">
+                    <span class="arrow">▲</span> 맨 위로 올라가기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2일 차 일정 -->
+    <div id="day-2" class="day-section">
+        <div class="timeline">
+            <div class="timeline-item">
+                <span class="time-badge">~ 08:00</span>
+                <div class="title">기상 및 준비</div>
+                <div class="desc">체크아웃 준비 및 상쾌하게 2일 차를 시작합니다!</div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">08:00 ~ 08:10</span>
+                <div class="title">이동 (한일옥)</div>
+                <div class="desc">아침 식사를 위해 한일옥으로 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="item-header">
+                    <span class="time-badge">08:10 ~ 09:00</span>
+                    <span class="tag-mint">아침 해장</span>
+                </div>
+                <div class="title">아침식사 (한일옥)</div>
+                <div class="rating-meta">
+                    <span class="star">★</span> <strong>4.9</strong> <span>(소고기무국 전문)</span>
+                </div>
+                <div class="desc">시원하고 따뜻한 소고기무국으로 속을 든든하게 채웁니다.</div>
+                <div class="image-wrapper">
+                    <img src="%EC%98%A5.jpeg" alt="한일옥 소고기무국 상차림" class="place-img" onerror="this.src='https://recipe1.ezmember.co.kr/cache/recipe/2025/06/10/554a878fe6617647d2f9d3819bc874db1.jpg'">
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">09:00 ~ 09:10</span>
+                <div class="title">이동 (스타필드 마켓)</div>
+                <div class="desc">경암동 철길마을 근처 스타필드 마켓으로 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="item-header">
+                    <span class="time-badge">09:10 ~ 10:00</span>
+                    <span class="tag-mint">추억의 거리</span>
+                </div>
+                <div class="title">경암동 철길마을 관람</div>
+                <div class="desc">달고나 만들기, 교복 체험, 레트로 스토어가 가득한 철길 거리를 둘러봅니다.</div>
+                <div class="image-wrapper">
+                    <!-- 새로 첨부된 이미지: 길.jpeg -->
+                    <img src="%EA%B8%B8.jpeg" alt="경암동 철길마을 풍경" class="place-img" onerror="this.src='https://www.gunsan.go.kr/upload_data/board_data/TOUR/170078364729156.jpg'">
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">10:00 ~ 13:00</span>
+                <div class="title">이동 (목향원)</div>
+                <div class="desc">점심 식사를 위해 목향원으로 여유있게 이동합니다.</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="item-header">
+                    <span class="time-badge">13:00 ~ 14:00</span>
+                    <span class="tag-discount">여행의 마무리</span>
+                </div>
+                <div class="title">점심식사 (목향원)</div>
+                <div class="desc">경기도 남양주 목향원에서 풍성하고 맛있는 쌈밥 정식으로 여행의 마지막 식사를 즐깁니다.</div>
+                <div class="image-wrapper">
+                    <img src="%EB%AA%A9.jpeg" alt="목향원 쌈밥 정식" class="place-img" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-badge">14:00 ~</span>
+                <div class="title">이동 (집)</div>
+                <div class="desc">모든 일정을 즐겁게 마치고 집으로 복귀합니다.</div>
+            </div>
+
+            <!-- 2일 차 화면 제일 하단: 맨 위로 가기 버튼 -->
+            <div class="scroll-top-wrapper">
+                <button class="btn-scroll-top" onclick="scrollToTop()">
+                    <span class="arrow">▲</span> 맨 위로 올라가기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ad-banner-dark">
+        <div class="text">
+            쉿~ 고객님은 <strong>배달팁이 무료!</strong>
+        </div>
+        <button class="btn-action">배민클럽</button>
+    </div>
+
+    <footer>
+        <p>우리가 어떤 민족입니까? 식지 않는 여행의 민족! 🛵✨</p>
+    </footer>
+</div>
+
+<script>
+    // 페이지 로드 시 이름 확인
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedName = localStorage.getItem('userName');
+        if (savedName) {
+            applyName(savedName);
+            document.getElementById('name-modal').style.display = 'none';
+        }
+
+        // 기존 탭 설정 불러오기
+        const savedDay = localStorage.getItem('selectedDay');
+        if (savedDay) {
+            switchDay(parseInt(savedDay, 10));
+        }
+    });
+
+    // 이름 제출 버튼 클릭 시 실행
+    function submitName() {
+        const inputVal = document.getElementById('modal-name-input').value.trim();
+        if (!inputVal) {
+            alert("성함을 입력해 주세요!");
+            return;
+        }
+
+        localStorage.setItem('userName', inputVal);
+        applyName(inputVal);
+        document.getElementById('name-modal').style.display = 'none';
+    }
+
+    // 엔터키 입력 시에도 확인 버튼과 동일하게 동작
+    document.getElementById('modal-name-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            submitName();
+        }
+    });
+
+    // 화면에 이름 반영 함수
+    function applyName(name) {
+        const userNameSpan = document.getElementById('user-name');
+        const couponNameSpan = document.getElementById('coupon-name');
+        
+        if (userNameSpan) userNameSpan.textContent = name + "님";
+        if (couponNameSpan) couponNameSpan.textContent = name;
+    }
+
+    // 탭 전환 및 LocalStorage 저장 함수
+    function switchDay(day, element) {
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        
+        if (element) {
+            element.classList.add('active');
+        } else {
+            const activeBtn = document.getElementById(`tab-btn-${day}`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        const day1 = document.getElementById('day-1');
+        const day2 = document.getElementById('day-2');
+
+        if (day === 1) {
+            day1.classList.add('active');
+            day2.classList.remove('active');
+        } else {
+            day1.classList.remove('active');
+            day2.classList.add('active');
+        }
+
+        // 선택된 탭 정보를 LocalStorage에 저장
+        localStorage.setItem('selectedDay', day);
+    }
+
+    // 화면 최상단 스크롤 이동 함수
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+</script>
+
+</body>
+</html>
