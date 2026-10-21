@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="https://paring81.github.io/Gunsan/군산.jpg">
-    <title>쌍쌍바 모임의 군산 1박 2일 여행 안내장 </title>
+    <title>쌍쌍바 모임의 군산 1박 2일 여행 안내장</title>
+    
+    <!-- 카카오톡 공유 미리보기(OG) 설정 -->
+    <meta property="og:title" content="쌍쌍바 모임의 군산 1박 2일 여행 안내장">
+    <meta property="og:description" content="세상 모든 맛과 감성이 식지 않도록! 알찬 군산 일정">
+    <meta property="og:image" content="자장.jpeg">
+    <meta property="og:url" content="">
+
     <style>
         @font-face {
             font-family: 'BM DOHYEON';
@@ -163,6 +169,399 @@
             box-shadow: 0 0 0 var(--border-strong);
         }
 
+        /* 🧳 준비물 체크리스트 & 방명록 모달 공통 스타일 */
+        #checklist-modal, #guestbook-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: oklch(0.18 0 0 / 0.6);
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            padding: 20px;
+        }
+
+        .checklist-content, .guestbook-content {
+            background-color: var(--bg-surface);
+            border-radius: var(--radius-xl);
+            padding: 24px 20px;
+            width: 100%;
+            max-width: 440px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-3);
+            border: 2px solid var(--border-strong);
+            text-align: left;
+        }
+
+        .checklist-content h2, .guestbook-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+            color: var(--fg-1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .checklist-content .sub-desc, .guestbook-content .sub-desc {
+            font-size: 0.85rem;
+            color: var(--fg-3);
+            margin-bottom: 16px;
+        }
+
+        /* 📝 방명록 전용 스타일 */
+        .guestbook-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background-color: var(--bg-subtle);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-1);
+        }
+
+        .gb-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .gb-nickname-input {
+            width: 110px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-2);
+            border-radius: var(--radius-sm);
+            outline: none;
+            font-weight: 600;
+        }
+
+        .gb-message-input {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-2);
+            border-radius: var(--radius-sm);
+            outline: none;
+        }
+
+        .gb-submit-btn {
+            background-color: var(--primary);
+            color: var(--fg-1);
+            font-family: var(--font-h1);
+            font-size: 0.9rem;
+            padding: 10px;
+            border: 1.5px solid var(--border-strong);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            box-shadow: 0 2px 0 var(--border-strong);
+        }
+
+        .gb-submit-btn:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .guestbook-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+
+        .gb-card {
+            background-color: var(--primary-tint);
+            border: 1px solid oklch(0.80 0.10 178);
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .gb-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .gb-author {
+            font-family: var(--font-h1);
+            font-size: 0.85rem;
+            color: oklch(0.35 0.12 184);
+        }
+
+        .gb-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gb-date {
+            font-size: 0.75rem;
+            color: var(--fg-3);
+        }
+
+        .gb-delete-btn {
+            background: none;
+            border: none;
+            color: var(--red);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 0 2px;
+        }
+
+        .gb-delete-btn:hover {
+            text-decoration: underline;
+        }
+
+        .gb-text {
+            color: var(--fg-1);
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .empty-gb {
+            text-align: center;
+            color: var(--fg-3);
+            font-size: 0.85rem;
+            padding: 20px 0;
+        }
+
+        .checklist-group {
+            margin-bottom: 18px;
+        }
+
+        .checklist-group h3 {
+            font-family: var(--font-h1);
+            font-size: 1rem;
+            color: var(--primary-hover);
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1.5px solid var(--border-1);
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background 0.15s ease;
+            user-select: none;
+        }
+
+        .checklist-item:hover {
+            background-color: var(--bg-subtle);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-hover);
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--fg-1);
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .checklist-item.checked label {
+            text-decoration: line-through;
+            color: var(--fg-4);
+        }
+
+        .checklist-close-btn {
+            width: 100%;
+            background-color: var(--fg-1);
+            color: #ffffff;
+            font-family: var(--font-h1);
+            font-size: 1rem;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.1s ease;
+        }
+
+        .checklist-close-btn:active {
+            transform: translateY(2px);
+        }
+
+        /* 🧾 실시간 지출 장부 (가계부) 스타일 */
+        .expense-card {
+            margin: 0 16px 20px 16px;
+            background: var(--bg-surface);
+            border: 2px solid var(--border-strong);
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
+            box-shadow: var(--shadow-2);
+        }
+
+        .expense-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .expense-header h3 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--fg-1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .expense-total-badge {
+            background-color: var(--primary-tint);
+            color: oklch(0.35 0.12 184);
+            font-family: var(--font-h1);
+            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            border: 1px solid oklch(0.80 0.10 178);
+        }
+
+        .expense-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 14px;
+            background-color: var(--bg-subtle);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-1);
+        }
+
+        .expense-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .expense-place {
+            flex: 1.2;
+            padding: 8px 10px;
+            font-size: 0.9rem;
+            font-family: var(--font-body);
+            border: 1.5px solid var(--border-2);
+            border-radius: var(--radius-sm);
+            outline: none;
+            background-color: var(--bg-surface);
+            font-weight: 600;
+        }
+
+        .expense-amount {
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 0.9rem;
+            font-family: var(--font-body);
+            border: 1.5px solid var(--border-2);
+            border-radius: var(--radius-sm);
+            outline: none;
+            background-color: var(--bg-surface);
+            font-weight: 700;
+        }
+
+        .expense-btn {
+            background-color: var(--primary);
+            color: var(--fg-1);
+            font-family: var(--font-h1);
+            font-size: 0.9rem;
+            padding: 10px;
+            border: 1.5px solid var(--border-strong);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            box-shadow: 0 2px 0 var(--border-strong);
+        }
+
+        .expense-btn:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .expense-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .expense-item {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-2);
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .expense-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .expense-item-place {
+            font-family: var(--font-h1);
+            font-size: 0.95rem;
+            color: var(--fg-1);
+        }
+
+        .expense-item-date {
+            font-size: 0.75rem;
+            color: var(--fg-3);
+        }
+
+        .expense-item-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .expense-item-price {
+            font-family: var(--font-h1);
+            font-size: 1rem;
+            color: var(--red);
+        }
+
+        .expense-delete-btn {
+            background: none;
+            border: none;
+            color: var(--fg-3);
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+
+        .expense-delete-btn:hover {
+            color: var(--red);
+        }
+
+        .empty-expense {
+            text-align: center;
+            color: var(--fg-3);
+            font-size: 0.85rem;
+            padding: 15px 0;
+        }
+
         .container {
             max-width: 640px;
             margin: 0 auto;
@@ -180,11 +579,17 @@
             color: var(--fg-1);
         }
 
+        .header-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
         .role-title {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
         }
 
         .role-title strong {
@@ -206,6 +611,18 @@
             padding: 3px 8px;
             border-radius: 4px;
             letter-spacing: -0.2px;
+        }
+
+        /* 디데이 뱃지 스타일 */
+        .badge-dday {
+            background-color: var(--red);
+            color: #ffffff;
+            font-family: var(--font-h1);
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: -0.2px;
+            box-shadow: 0 2px 4px oklch(0 0 0 / 0.15);
         }
 
         .mint-header h1 {
@@ -231,6 +648,13 @@
             justify-content: space-between;
             box-shadow: var(--shadow-1);
             border: 2px solid var(--border-strong);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .search-bar:active {
+            transform: scale(0.98);
         }
 
         .search-bar .placeholder {
@@ -262,6 +686,14 @@
             flex-direction: column;
             justify-content: space-between;
             box-shadow: var(--shadow-1);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .service-card:active {
+            transform: scale(0.98);
         }
 
         .service-card .title {
@@ -279,59 +711,14 @@
             margin-top: 2px;
         }
 
+        .service-card .sub.weather-sub {
+            color: var(--red);
+            font-weight: 700;
+        }
+
         .service-card .illust-icon {
             align-self: flex-end;
             font-size: 1.5rem;
-        }
-
-        .coupon-card-light {
-            margin: 0 16px 20px 16px;
-            background: var(--bg-surface);
-            border: 1.5px solid var(--primary);
-            border-radius: 14px;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: var(--shadow-1);
-        }
-
-        .coupon-card-light .text-area {
-            font-size: 0.95rem;
-            color: var(--fg-1);
-            font-weight: 600;
-        }
-
-        .coupon-card-light .text-area strong {
-            color: var(--red);
-        }
-
-        .coupon-card-light .ticket {
-            background-color: var(--orange);
-            color: #ffffff;
-            font-family: var(--font-display);
-            font-size: 1rem;
-            padding: 8px 16px;
-            border-radius: 10px;
-            transform: rotate(-3deg);
-            box-shadow: 2px 3px 0 oklch(0.18 0 0 / 0.12);
-            position: relative;
-        }
-
-        .coupon-card-light .b-coin {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--fg-1);
-            color: var(--primary);
-            font-family: var(--font-h1);
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .tab-bar-scroll {
@@ -505,13 +892,13 @@
             box-shadow: 0 2px 6px oklch(0 0 0 / 0.15);
         }
 
-        /* 맨 위로 가기 버튼 스타일 */
-        .scroll-top-wrapper {
+        /* 탭 전환형 하단 이동 버튼 스타일 */
+        .switch-day-wrapper {
             text-align: center;
             margin: 24px 0 10px 0;
         }
 
-        .btn-scroll-top {
+        .btn-switch-day {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -528,13 +915,13 @@
             transition: all 0.2s ease;
         }
 
-        .btn-scroll-top:active {
+        .btn-switch-day:active {
             transform: translateY(2px);
             box-shadow: var(--shadow-1);
             background-color: var(--primary-tint);
         }
 
-        .btn-scroll-top .arrow {
+        .btn-switch-day .arrow {
             font-size: 0.9rem;
             color: var(--primary-hover);
         }
@@ -593,54 +980,154 @@
     </div>
 </div>
 
+<!-- 📝 한 줄 방명록 팝업 모달 -->
+<div id="guestbook-modal">
+    <div class="guestbook-content">
+        <h2>
+            <span>📝 한 줄 방명록</span>
+        </h2>
+        <p class="sub-desc">쌍쌍바 모임에 남기고 싶은 한마디나 여행 소감을 공유해 주세요!</p>
+
+        <div class="guestbook-form">
+            <div class="gb-input-row">
+                <input type="text" id="gb-nickname" class="gb-nickname-input" placeholder="닉네임">
+                <input type="text" id="gb-message" class="gb-message-input" placeholder="한 줄 메시지를 적어주세요!" onkeypress="if(event.key==='Enter') addGuestbookEntry()">
+            </div>
+            <button class="gb-submit-btn" onclick="addGuestbookEntry()">남기기 ✍️</button>
+        </div>
+
+        <div class="guestbook-list" id="gb-list">
+            <!-- 방명록 목록이 여기에 표시됩니다 -->
+        </div>
+
+        <button class="checklist-close-btn" onclick="closeGuestbook()">닫기</button>
+    </div>
+</div>
+
+<!-- 🧳 준비물 체크리스트 팝업 모달 -->
+<div id="checklist-modal">
+    <div class="checklist-content">
+        <h2>
+            <span>🧳 여행 준비물 체크리스트</span>
+        </h2>
+        <p class="sub-desc">터치해서 미처 못 챙긴 물건이 없는지 확인해 보세요!</p>
+        
+        <div class="checklist-group">
+            <h3>👤 개인 필수 준비물</h3>
+            <div class="checklist-item" onclick="toggleCheck(this, 'c1')">
+                <input type="checkbox" id="c1">
+                <label for="c1">신분증 / 운전면허증</label>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this, 'c2')">
+                <input type="checkbox" id="c2">
+                <label for="c2">스마트폰 충전기 & 케이블</label>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this, 'c3')">
+                <input type="checkbox" id="c3">
+                <label for="c3">세면도구 & 칫솔/치약</label>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this, 'c4')">
+                <input type="checkbox" id="c4">
+                <label for="c4">개인 상비약 (소화제/두통약 등)</label>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this, 'c5')">
+                <input type="checkbox" id="c5">
+                <label for="c5">여벌 옷 & 여분의 속옷/양말</label>
+            </div>
+        </div>
+
+        <div class="checklist-group">
+            <h3>🎒 공통 & 선택 준비물</h3>
+            <div class="checklist-item" onclick="toggleCheck(this, 'c6')">
+                <input type="checkbox" id="c6">
+                <label for="c6">보조배터리</label>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this, 'c7')">
+                <input type="checkbox" id="c7">
+                <label for="c7">우산 또는 우비</label>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this, 'c8')">
+                <input type="checkbox" id="c8">
+                <label for="c8">비상용 현금</label>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this, 'c9')">
+                <input type="checkbox" id="c9">
+                <label for="c9">모자 & 선글라스</label>
+            </div>
+        </div>
+
+        <button class="checklist-close-btn" onclick="closeChecklist()">확인 완료</button>
+    </div>
+</div>
+
 <!-- 메인 컨테이너 -->
 <div class="container" id="top">
     <header class="mint-header">
-        <div class="role-title">
-            <strong>고마운분,</strong>
-            <span id="user-name">홍석님</span>
-            <span class="badge-club">배민클럽</span>
+        <div class="header-top-row">
+            <div class="role-title">
+                <strong>고마운분,</strong>
+                <span id="user-name">홍석님</span>
+                <span class="badge-club">배민클럽</span>
+            </div>
+            <div>
+                <span id="dday-badge" class="badge-dday">D-Day</span>
+            </div>
         </div>
         <h1>🚗 쌍쌍바 모임의 군산 1박 2일 여행 안내장</h1>
         <p>세상 모든 맛과 감성이 식지 않도록! 알찬 군산 일정</p>
         
-        <div class="search-bar">
-            <span class="placeholder">군산 맛집 나와라 뚝딱!!</span>
-            <span class="search-icon">🔍</span>
-        </div>
+        <!-- 네이버 지도 바로가기로 연결된 검색바 코너 -->
+        <a href="https://map.naver.com" target="_blank" class="search-bar">
+            <span class="placeholder">우리가 갈 곳이 궁금하세요?</span>
+            <span class="search-icon">🗺️</span>
+        </a>
     </header>
 
     <div class="service-cards">
-        <div class="service-card">
+        <!-- 📝 '한 줄 방명록 / 롤링페이퍼' 카드 -->
+        <div class="service-card" onclick="openGuestbook()">
             <div>
-                <div class="title">가게배달</div>
-                <div class="sub">군산 맛집 총집합</div>
+                <div class="title">한 줄 방명록</div>
+                <div class="sub" id="gb-card-status">소감 한마디 남기기</div>
             </div>
-            <div class="illust-icon">🍔</div>
+            <div class="illust-icon">📝</div>
         </div>
-        <div class="service-card">
+        <!-- '여행 준비물 체크리스트' 카드 -->
+        <div class="service-card" onclick="openChecklist()">
             <div>
-                <div class="title">B마트</div>
-                <div class="sub">장보기도 빠르게</div>
+                <div class="title">준비물 챙기기</div>
+                <div class="sub" id="checklist-card-status">터치해서 체크!</div>
             </div>
-            <div class="illust-icon">🛍️</div>
+            <div class="illust-icon">🧳</div>
         </div>
+        <!-- 실시간 군산 날씨 연동 카드 -->
         <div class="service-card">
             <div>
-                <div class="title">배민스토어</div>
-                <div class="sub">여행 필수품 배달</div>
+                <div class="title">군산 날씨</div>
+                <div class="sub" id="weather-temp-status">날씨 불러오는 중...</div>
+                <div class="sub weather-sub" id="weather-outfit-tip">⌛ 잠시만요!</div>
             </div>
-            <div class="illust-icon">🛒</div>
+            <div class="illust-icon" id="weather-icon">🌤️</div>
         </div>
     </div>
 
-    <div class="coupon-card-light">
-        <div class="text-area">
-            <span id="coupon-name">홍석</span>님을 위해 준비한 <strong>여행 특가 쿠폰</strong>
+    <!-- 🧾 실시간 지출 장부 (가계부) 코너 -->
+    <div class="expense-card">
+        <div class="expense-header">
+            <h3>🧾 실시간 지출 장부</h3>
+            <span class="expense-total-badge" id="expense-total-sum">총 지출: 0원</span>
         </div>
-        <div class="ticket">
-            쿠폰
-            <div class="b-coin">B</div>
+
+        <div class="expense-form">
+            <div class="expense-input-row">
+                <input type="text" id="expense-place" class="expense-place" placeholder="사용 장소 (예: 태성반점)">
+                <input type="number" id="expense-amount" class="expense-amount" placeholder="금액 (원)" onkeypress="if(event.key==='Enter') addExpenseItem()">
+            </div>
+            <button class="expense-btn" onclick="addExpenseItem()">지출 내역 추가하기 ➕</button>
+        </div>
+
+        <div class="expense-list" id="expense-list">
+            <!-- 지출 내역 목록이 여기에 표시됩니다 -->
         </div>
     </div>
 
@@ -669,7 +1156,7 @@
                 </div>
                 <div class="desc">태성반점에서 든든하고 맛있는 짬뽕과 탕수육 요리를 즐깁니다.</div>
                 <div class="image-wrapper">
-                    <img src="%EC%9E%90%EC%9E%A5.jpeg" alt="태성반점 짬뽕과 탕수육" class="place-img" onerror="this.src='https://blog.kakaocdn.net/dna/z1JMm/btrYIcCoy2u/AAAAAAAAAAAAAAAAAAAAAIHFr1pwik0AueG6LTXe02CXirXUEIbThr-YRo9hgdfc/img.jpg?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1793458799&allow_ip=&allow_referer=&signature=YAxdqELZ3My9F%2BI4Sl%2BoTaVC%FtQ%3D'">
+                    <img src="자장.jpeg" alt="태성반점 짬뽕과 탕수육" class="place-img" onerror="this.src='https://blog.kakaocdn.net/dna/z1JMm/btrYIcCoy2u/AAAAAAAAAAAAAAAAAAAAAIHFr1pwik0AueG6LTXe02CXirXUEIbThr-YRo9hgdfc/img.jpg?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1793458799&allow_ip=&allow_referer=&signature=YAxdqELZ3My9F%2BI4Sl%2BoTaVC%FtQ%3D'">
                     <div class="club-mini-badge">배민클럽 가맹점</div>
                 </div>
             </div>
@@ -736,7 +1223,7 @@
                 </div>
                 <div class="desc">유명한 단팥빵, 야채빵 및 맛있는 베이커리를 여유있게 구매합니다.</div>
                 <div class="image-wrapper">
-                    <img src="%EB%B9%B5.jpeg" alt="이성당 메뉴 추천" class="place-img" onerror="this.src='https://leesungdang1945.cafe24.com/images/logo.png'">
+                    <img src="빵.jpeg" alt="이성당 메뉴 추천" class="place-img" onerror="this.src='https://leesungdang1945.cafe24.com/images/logo.png'">
                 </div>
             </div>
 
@@ -766,7 +1253,7 @@
                 </div>
                 <div class="desc">멋진 바다 풍경과 함께 카페에서 오션뷰 휴식을 즐깁니다.</div>
                 <div class="image-wrapper">
-                    <img src="바다정원.jpeg" alt="장자바다정원 카페 전경" class="place-img" onerror="this.style.display='none'">
+                    <img src="장자바다정원카페.jpeg" alt="장자바다정원 카페 전경" class="place-img" onerror="this.style.display='none'">
                 </div>
             </div>
 
@@ -774,15 +1261,15 @@
                 <span class="time-badge">17:00 ~ 18:00</span>
                 <div class="title">이동 (탑클라우드호텔)</div>
                 <div class="desc">오늘 하루 묵을 숙소인 탑클라우드호텔로 이동합니다.</div>
-                <div class="image-wrapper">
-                    <img src="https://images.trvl-media.com/lodging/72000000/71070000/71063600/71063598/e0943587.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill" alt="탑클라우드호텔" class="place-img" onerror="this.style.display='none'">
-                </div>
             </div>
 
             <div class="timeline-item">
                 <span class="time-badge">18:00 ~ 18:30</span>
                 <div class="title">체크인</div>
                 <div class="desc">호텔 체크인을 진행하고 짐을 풀어놓습니다.</div>
+                <div class="image-wrapper">
+                    <img src="https://images.trvl-media.com/lodging/72000000/71070000/71063600/71063598/e0943587.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill" alt="탑클라우드호텔" class="place-img" onerror="this.style.display='none'">
+                </div>
             </div>
 
             <div class="timeline-item">
@@ -802,7 +1289,7 @@
                 </div>
                 <div class="desc">신선하고 푸짐한 생선구이와 얼큰한 찌개 상차림으로 저녁을 즐깁니다.</div>
                 <div class="image-wrapper">
-                    <img src="%EC%83%9D%EC%84%A0.jpeg" alt="군산생선명가 생선구이 상차림" class="place-img" onerror="this.style.display='none'">
+                    <img src="생선.jpeg" alt="군산생선명가 생선구이 상차림" class="place-img" onerror="this.style.display='none'">
                     <div class="club-mini-badge">배민클럽 가맹점</div>
                 </div>
             </div>
@@ -813,10 +1300,10 @@
                 <div class="desc">은파호수공원 야경 산책 또는 근처에서 2차 자리를 가집니다.</div>
             </div>
 
-            <!-- 1일 차 화면 제일 하단: 맨 위로 가기 버튼 -->
-            <div class="scroll-top-wrapper">
-                <button class="btn-scroll-top" onclick="scrollToTop()">
-                    <span class="arrow">▲</span> 맨 위로 올라가기
+            <!-- 1일 차 화면 맨 아래: 2일 차로 가기 버튼 -->
+            <div class="switch-day-wrapper">
+                <button class="btn-switch-day" onclick="switchAndScroll(2)">
+                    2일 차 일정으로 가기 <span class="arrow">▶</span>
                 </button>
             </div>
         </div>
@@ -848,7 +1335,7 @@
                 </div>
                 <div class="desc">시원하고 따뜻한 소고기무국으로 속을 든든하게 채웁니다.</div>
                 <div class="image-wrapper">
-                    <img src="%EC%98%A5.jpeg" alt="한일옥 소고기무국 상차림" class="place-img" onerror="this.src='https://recipe1.ezmember.co.kr/cache/recipe/2025/06/10/554a878fe6617647d2f9d3819bc874db1.jpg'">
+                    <img src="옥.jpeg" alt="한일옥 소고기무국 상차림" class="place-img" onerror="this.src='https://recipe1.ezmember.co.kr/cache/recipe/2025/06/10/554a878fe6617647d2f9d3819bc874db1.jpg'">
                 </div>
             </div>
 
@@ -866,8 +1353,7 @@
                 <div class="title">경암동 철길마을 관람</div>
                 <div class="desc">달고나 만들기, 교복 체험, 레트로 스토어가 가득한 철길 거리를 둘러봅니다.</div>
                 <div class="image-wrapper">
-                    <!-- 새로 첨부된 이미지: 길.jpeg -->
-                    <img src="%EA%B8%B8.jpeg" alt="경암동 철길마을 풍경" class="place-img" onerror="this.src='https://www.gunsan.go.kr/upload_data/board_data/TOUR/170078364729156.jpg'">
+                    <img src="길.jpeg" alt="경암동 철길마을 풍경" class="place-img" onerror="this.src='https://www.gunsan.go.kr/upload_data/board_data/TOUR/170078364729156.jpg'">
                 </div>
             </div>
 
@@ -885,7 +1371,7 @@
                 <div class="title">점심식사 (목향원)</div>
                 <div class="desc">경기도 남양주 목향원에서 풍성하고 맛있는 쌈밥 정식으로 여행의 마지막 식사를 즐깁니다.</div>
                 <div class="image-wrapper">
-                    <img src="%EB%AA%A9.jpeg" alt="목향원 쌈밥 정식" class="place-img" onerror="this.style.display='none'">
+                    <img src="목.jpeg" alt="목향원 쌈밥 정식" class="place-img" onerror="this.style.display='none'">
                 </div>
             </div>
 
@@ -895,10 +1381,10 @@
                 <div class="desc">모든 일정을 즐겁게 마치고 집으로 복귀합니다.</div>
             </div>
 
-            <!-- 2일 차 화면 제일 하단: 맨 위로 가기 버튼 -->
-            <div class="scroll-top-wrapper">
-                <button class="btn-scroll-top" onclick="scrollToTop()">
-                    <span class="arrow">▲</span> 맨 위로 올라가기
+            <!-- 2일 차 화면 맨 아래: 1일 차로 가기 버튼 -->
+            <div class="switch-day-wrapper">
+                <button class="btn-switch-day" onclick="switchAndScroll(1)">
+                    <span class="arrow">◀</span> 1일 차 일정으로 가기
                 </button>
             </div>
         </div>
@@ -917,15 +1403,354 @@
 </div>
 
 <script>
-    // 페이지 로드 시 이름 확인
+    // 🧾 실시간 지출 장부(가계부) 관리 함수
+    function addExpenseItem() {
+        const placeEl = document.getElementById('expense-place');
+        const amountEl = document.getElementById('expense-amount');
+
+        const place = placeEl.value.trim();
+        const amount = parseFloat(amountEl.value);
+
+        if (!place) {
+            alert('사용 장소를 입력해 주세요!');
+            placeEl.focus();
+            return;
+        }
+
+        if (isNaN(amount) || amount <= 0) {
+            alert('올바른 지출 금액을 입력해 주세요!');
+            amountEl.focus();
+            return;
+        }
+
+        const expenses = JSON.parse(localStorage.getItem('travelExpenses') || '[]');
+        
+        const now = new Date();
+        const month = now.getMonth() + 1;
+        const date = now.getDate();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const dateStr = `${month}/${date} ${hours}:${minutes}`;
+
+        expenses.unshift({ id: Date.now(), place, amount, date: dateStr });
+        localStorage.setItem('travelExpenses', JSON.stringify(expenses));
+
+        placeEl.value = '';
+        amountEl.value = '';
+        renderExpenses();
+    }
+
+    function deleteExpenseItem(id) {
+        if (confirm("이 지출 내역을 삭제하시겠습니까?")) {
+            let expenses = JSON.parse(localStorage.getItem('travelExpenses') || '[]');
+            expenses = expenses.filter(item => item.id !== id);
+            localStorage.setItem('travelExpenses', JSON.stringify(expenses));
+            renderExpenses();
+        }
+    }
+
+    function renderExpenses() {
+        const listEl = document.getElementById('expense-list');
+        const totalSumEl = document.getElementById('expense-total-sum');
+        const expenses = JSON.parse(localStorage.getItem('travelExpenses') || '[]');
+
+        let totalSum = 0;
+        expenses.forEach(item => {
+            totalSum += Number(item.amount) || 0;
+        });
+
+        if (totalSumEl) {
+            totalSumEl.textContent = `총 지출: ${totalSum.toLocaleString()}원`;
+        }
+
+        if (expenses.length === 0) {
+            listEl.innerHTML = '<div class="empty-expense">아직 등록된 지출 내역이 없습니다.</div>';
+            return;
+        }
+
+        listEl.innerHTML = expenses.map(item => `
+            <div class="expense-item">
+                <div class="expense-item-info">
+                    <span class="expense-item-place">${escapeHtml(item.place)}</span>
+                    <span class="expense-item-date">${item.date}</span>
+                </div>
+                <div class="expense-item-right">
+                    <span class="expense-item-price">${Number(item.amount).toLocaleString()}원</span>
+                    <button class="expense-delete-btn" onclick="deleteExpenseItem(${item.id})">삭제</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 📝 방명록 제어 및 데이터 저장/삭제 함수
+    function openGuestbook() {
+        document.getElementById('guestbook-modal').style.display = 'flex';
+        
+        const savedName = localStorage.getItem('userName');
+        const nicknameInput = document.getElementById('gb-nickname');
+        if (savedName && nicknameInput && !nicknameInput.value) {
+            nicknameInput.value = savedName;
+        }
+
+        renderGuestbook();
+    }
+
+    function closeGuestbook() {
+        document.getElementById('guestbook-modal').style.display = 'none';
+    }
+
+    function addGuestbookEntry() {
+        const nicknameEl = document.getElementById('gb-nickname');
+        const messageEl = document.getElementById('gb-message');
+        
+        const nickname = nicknameEl.value.trim();
+        const message = messageEl.value.trim();
+
+        if (!nickname) {
+            alert('닉네임을 입력해 주세요!');
+            nicknameEl.focus();
+            return;
+        }
+
+        if (!message) {
+            alert('한 줄 메시지를 입력해 주세요!');
+            messageEl.focus();
+            return;
+        }
+
+        const entries = JSON.parse(localStorage.getItem('guestbookEntries') || '[]');
+        
+        const now = new Date();
+        const month = now.getMonth() + 1;
+        const date = now.getDate();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const dateStr = `${month}/${date} ${hours}:${minutes}`;
+
+        entries.unshift({ id: Date.now(), nickname, message, date: dateStr });
+        localStorage.setItem('guestbookEntries', JSON.stringify(entries));
+
+        messageEl.value = '';
+        renderGuestbook();
+    }
+
+    function deleteGuestbookEntry(id) {
+        if (confirm("이 방명록 글을 삭제하시겠습니까?")) {
+            let entries = JSON.parse(localStorage.getItem('guestbookEntries') || '[]');
+            entries = entries.filter(entry => entry.id !== id);
+            localStorage.setItem('guestbookEntries', JSON.stringify(entries));
+            renderGuestbook();
+        }
+    }
+
+    function renderGuestbook() {
+        const gbListEl = document.getElementById('gb-list');
+        const gbCardStatusEl = document.getElementById('gb-card-status');
+        const entries = JSON.parse(localStorage.getItem('guestbookEntries') || '[]');
+
+        if (gbCardStatusEl) {
+            if (entries.length > 0) {
+                gbCardStatusEl.textContent = `글 ${entries.length}개 등록됨`;
+            } else {
+                gbCardStatusEl.textContent = `소감 한마디 남기기`;
+            }
+        }
+
+        if (entries.length === 0) {
+            gbListEl.innerHTML = '<div class="empty-gb">아직 작성된 방명록이 없습니다.<br>첫 번째 한마디를 남겨보세요! 🎈</div>';
+            return;
+        }
+
+        gbListEl.innerHTML = entries.map(entry => `
+            <div class="gb-card">
+                <div class="gb-card-header">
+                    <span class="gb-author">${escapeHtml(entry.nickname)}</span>
+                    <div class="gb-header-right">
+                        <span class="gb-date">${entry.date}</span>
+                        <button class="gb-delete-btn" onclick="deleteGuestbookEntry(${entry.id})">삭제</button>
+                    </div>
+                </div>
+                <div class="gb-text">${escapeHtml(entry.message)}</div>
+            </div>
+        `).join('');
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    // 🧳 체크리스트 모달 제어 및 상태 저장 함수
+    function openChecklist() {
+        document.getElementById('checklist-modal').style.display = 'flex';
+    }
+
+    function closeChecklist() {
+        document.getElementById('checklist-modal').style.display = 'none';
+        updateChecklistSummary();
+    }
+
+    function toggleCheck(element, id) {
+        const checkbox = document.getElementById(id);
+        if (event.target.tagName !== 'INPUT') {
+            checkbox.checked = !checkbox.checked;
+        }
+
+        if (checkbox.checked) {
+            element.classList.add('checked');
+        } else {
+            element.classList.remove('checked');
+        }
+
+        saveChecklistState();
+    }
+
+    function saveChecklistState() {
+        const state = {};
+        for (let i = 1; i <= 9; i++) {
+            const cb = document.getElementById(`c${i}`);
+            if (cb) state[`c${i}`] = cb.checked;
+        }
+        localStorage.setItem('checklistState', JSON.stringify(state));
+        updateChecklistSummary();
+    }
+
+    function loadChecklistState() {
+        const saved = localStorage.getItem('checklistState');
+        if (!saved) return;
+
+        const state = JSON.parse(saved);
+        for (let i = 1; i <= 9; i++) {
+            const cb = document.getElementById(`c${i}`);
+            if (cb && state[`c${i}`]) {
+                cb.checked = true;
+                const parent = cb.parentElement;
+                if (parent) parent.classList.add('checked');
+            }
+        }
+        updateChecklistSummary();
+    }
+
+    function updateChecklistSummary() {
+        let checkedCount = 0;
+        const total = 9;
+        for (let i = 1; i <= total; i++) {
+            const cb = document.getElementById(`c${i}`);
+            if (cb && cb.checked) checkedCount++;
+        }
+
+        const statusEl = document.getElementById('checklist-card-status');
+        if (statusEl) {
+            if (checkedCount === total) {
+                statusEl.textContent = `준비완료! (9/9)`;
+            } else if (checkedCount > 0) {
+                statusEl.textContent = `챙기는 중 (${checkedCount}/${total})`;
+            } else {
+                statusEl.textContent = `터치해서 체크!`;
+            }
+        }
+    }
+
+    // 🌤️ 군산 실시간 날씨 연동 함수 (Open-Meteo API 사용)
+    async function fetchGunsanWeather() {
+        const tempStatusEl = document.getElementById('weather-temp-status');
+        const outfitTipEl = document.getElementById('weather-outfit-tip');
+        const iconEl = document.getElementById('weather-icon');
+
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=35.9676&longitude=126.7366&current_weather=true';
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            const currentWeather = data.current_weather;
+            
+            const temp = Math.round(currentWeather.temperature);
+            const weatherCode = currentWeather.weathercode;
+
+            let weatherText = '맑음';
+            let icon = '☀️';
+
+            if (weatherCode === 0) {
+                weatherText = '맑음';
+                icon = '☀️';
+            } else if (weatherCode >= 1 && weatherCode <= 3) {
+                weatherText = '구름조금';
+                icon = '🌤️';
+            } else if (weatherCode >= 45 && weatherCode <= 48) {
+                weatherText = '안개';
+                icon = '🌫️';
+            } else if ((weatherCode >= 51 && weatherCode <= 67) || (weatherCode >= 80 && weatherCode <= 82)) {
+                weatherText = '비';
+                icon = '🌧️';
+            } else if ((weatherCode >= 71 && weatherCode <= 77) || (weatherCode >= 85 && weatherCode <= 86)) {
+                weatherText = '눈';
+                icon = '❄️';
+            } else if (weatherCode >= 95) {
+                weatherText = '뇌우';
+                icon = '🌩️';
+            }
+
+            tempStatusEl.textContent = `${weatherText} ${temp}°C`;
+            iconEl.textContent = icon;
+
+            if (icon === '🌧️' || icon === '🌩️') {
+                outfitTipEl.textContent = '☔ 비 소식! 우산 필수!';
+            } else if (temp <= 10) {
+                outfitTipEl.textContent = '🧥 두꺼운 겉옷/패딩 필수!';
+            } else if (temp > 10 && temp <= 15) {
+                outfitTipEl.textContent = '🧥 쌀쌀하니 겉옷 챙기세요!';
+            } else if (temp > 15 && temp <= 20) {
+                outfitTipEl.textContent = '👔 가벼운 자켓이 딱 좋아!';
+            } else {
+                outfitTipEl.textContent = '👕 가볍고 쾌적한 옷차림!';
+            }
+
+        } catch (error) {
+            console.error('날씨 데이터 불러오기 실패:', error);
+            tempStatusEl.textContent = '11/7 맑음 12°C';
+            outfitTipEl.textContent = '🧥 쌀쌀하니 겉옷 필수!';
+            iconEl.textContent = '🌤️';
+        }
+    }
+
+    // D-Day 계산 및 표시 함수 (출발일: 2026년 11월 7일)
+    function updateDday() {
+        const targetDate = new Date('2026-11-07T00:00:00');
+        const today = new Date();
+        
+        targetDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        const diffTime = targetDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        const ddayBadge = document.getElementById('dday-badge');
+        if (!ddayBadge) return;
+
+        if (diffDays > 0) {
+            ddayBadge.textContent = `D-${diffDays}`;
+        } else if (diffDays === 0) {
+            ddayBadge.textContent = `D-Day 🔥`;
+            ddayBadge.style.backgroundColor = 'var(--orange)';
+        } else {
+            ddayBadge.textContent = `여행중 ✨`;
+            ddayBadge.style.backgroundColor = 'var(--primary-hover)';
+        }
+    }
+
+    // 페이지 로드 시 실행
     document.addEventListener('DOMContentLoaded', () => {
+        updateDday();
+        fetchGunsanWeather();
+        loadChecklistState();
+        renderGuestbook();
+        renderExpenses();
+
         const savedName = localStorage.getItem('userName');
         if (savedName) {
             applyName(savedName);
             document.getElementById('name-modal').style.display = 'none';
         }
 
-        // 기존 탭 설정 불러오기
         const savedDay = localStorage.getItem('selectedDay');
         if (savedDay) {
             switchDay(parseInt(savedDay, 10));
@@ -955,10 +1780,7 @@
     // 화면에 이름 반영 함수
     function applyName(name) {
         const userNameSpan = document.getElementById('user-name');
-        const couponNameSpan = document.getElementById('coupon-name');
-        
         if (userNameSpan) userNameSpan.textContent = name + "님";
-        if (couponNameSpan) couponNameSpan.textContent = name;
     }
 
     // 탭 전환 및 LocalStorage 저장 함수
@@ -984,12 +1806,12 @@
             day2.classList.add('active');
         }
 
-        // 선택된 탭 정보를 LocalStorage에 저장
         localStorage.setItem('selectedDay', day);
     }
 
-    // 화면 최상단 스크롤 이동 함수
-    function scrollToTop() {
+    // 하단 일차 전환 버튼 클릭 시 상단으로 스크롤하며 일차 변경
+    function switchAndScroll(day) {
+        switchDay(day);
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
