@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>쌍쌍바 모임의 군산 1박 2일 여행 안내장</title>
     
     <!-- 카카오톡 공유 미리보기(OG) 설정 -->
@@ -81,10 +81,12 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent; /* 터치 시 하이라이트 박스 제거 */
         }
 
         html {
             scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -92,8 +94,9 @@
             background-color: var(--bg-page);
             color: var(--fg-1);
             line-height: 1.5;
-            padding: 0 0 40px 0;
+            padding: 0 0 env(safe-area-inset-bottom, 40px) 0;
             overflow-x: hidden;
+            word-break: keep-all; /* 모바일 한글 가독성 향상 */
         }
 
         /* 성함 입력 커스텀 모달 스타일 */
@@ -108,15 +111,16 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            padding: 20px;
+            padding: 16px;
+            backdrop-filter: blur(4px);
         }
 
         .modal-content {
             background-color: var(--bg-surface);
             border-radius: var(--radius-xl);
-            padding: 30px 24px;
+            padding: 28px 20px;
             width: 100%;
-            max-width: 380px;
+            max-width: 360px;
             box-shadow: var(--shadow-3);
             text-align: center;
             border: 2px solid var(--border-strong);
@@ -124,21 +128,21 @@
 
         .modal-content h2 {
             font-family: var(--font-display);
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 8px;
             color: var(--fg-1);
         }
 
         .modal-content p {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--fg-2);
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .modal-input {
             width: 100%;
             padding: 14px 16px;
-            font-size: 1.05rem;
+            font-size: 16px; /* 모바일 자동 확대 방지 */
             font-family: var(--font-body);
             border: 2px solid var(--border-strong);
             border-radius: var(--radius-md);
@@ -159,18 +163,19 @@
             background-color: var(--primary);
             color: var(--fg-1);
             font-family: var(--font-h1);
-            font-size: 1.1rem;
-            padding: 14px;
+            font-size: 1.05rem;
+            min-height: 48px; /* 터치 영역 확대 */
+            padding: 12px;
             border: 2px solid var(--border-strong);
             border-radius: var(--radius-md);
             cursor: pointer;
             box-shadow: 0 4px 0 var(--border-strong);
-            transition: all 0.1s ease;
+            transition: transform 0.05s ease;
         }
 
         .modal-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 var(--border-strong);
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 var(--border-strong);
         }
 
         /* 🧳 준비물 체크리스트 & 방명록 모달 공통 스타일 */
@@ -185,17 +190,19 @@
             align-items: center;
             justify-content: center;
             z-index: 9998;
-            padding: 20px;
+            padding: 16px;
+            backdrop-filter: blur(4px);
         }
 
         .checklist-content, .guestbook-content {
             background-color: var(--bg-surface);
             border-radius: var(--radius-xl);
-            padding: 24px 20px;
+            padding: 22px 18px;
             width: 100%;
-            max-width: 440px;
-            max-height: 85vh;
+            max-width: 420px;
+            max-height: 80vh;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* 모바일 부드러운 스크롤 */
             box-shadow: var(--shadow-3);
             border: 2px solid var(--border-strong);
             text-align: left;
@@ -203,7 +210,7 @@
 
         .checklist-content h2, .guestbook-content h2 {
             font-family: var(--font-display);
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             margin-bottom: 4px;
             color: var(--fg-1);
             display: flex;
@@ -214,7 +221,7 @@
         .checklist-content .sub-desc, .guestbook-content .sub-desc {
             font-size: 0.85rem;
             color: var(--fg-3);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         /* 📝 방명록 전용 스타일 */
@@ -222,7 +229,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             padding: 12px;
             background-color: var(--bg-subtle);
             border-radius: var(--radius-md);
@@ -235,9 +242,9 @@
         }
 
         .gb-nickname-input {
-            width: 110px;
-            padding: 8px 12px;
-            font-size: 0.85rem;
+            width: 100px;
+            padding: 10px 12px;
+            font-size: 16px; /* 모바일 자동 확대 방지 */
             border: 1px solid var(--border-2);
             border-radius: var(--radius-sm);
             outline: none;
@@ -246,8 +253,8 @@
 
         .gb-message-input {
             flex: 1;
-            padding: 8px 12px;
-            font-size: 0.85rem;
+            padding: 10px 12px;
+            font-size: 16px; /* 모바일 자동 확대 방지 */
             border: 1px solid var(--border-2);
             border-radius: var(--radius-sm);
             outline: none;
@@ -257,7 +264,8 @@
             background-color: var(--primary);
             color: var(--fg-1);
             font-family: var(--font-h1);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            min-height: 44px;
             padding: 10px;
             border: 1.5px solid var(--border-strong);
             border-radius: var(--radius-sm);
@@ -274,15 +282,15 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 250px;
+            max-height: 220px;
             overflow-y: auto;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .gb-card {
             background-color: var(--primary-tint);
             border: 1px solid oklch(0.80 0.10 178);
-            padding: 10px 14px;
+            padding: 12px 14px;
             border-radius: var(--radius-md);
             font-size: 0.9rem;
             position: relative;
@@ -316,14 +324,10 @@
             background: none;
             border: none;
             color: var(--red);
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             cursor: pointer;
             font-weight: bold;
-            padding: 0 2px;
-        }
-
-        .gb-delete-btn:hover {
-            text-decoration: underline;
+            padding: 4px;
         }
 
         .gb-text {
@@ -340,12 +344,12 @@
         }
 
         .checklist-group {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .checklist-group h3 {
             font-family: var(--font-h1);
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--primary-hover);
             margin-bottom: 8px;
             padding-bottom: 4px;
@@ -355,21 +359,20 @@
         .checklist-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
+            gap: 12px;
+            padding: 10px 10px; /* 터치영역 확보 */
             border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: background 0.15s ease;
             user-select: none;
         }
 
-        .checklist-item:hover {
+        .checklist-item:active {
             background-color: var(--bg-subtle);
         }
 
         .checklist-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             accent-color: var(--primary-hover);
             cursor: pointer;
         }
@@ -393,25 +396,25 @@
             color: #ffffff;
             font-family: var(--font-h1);
             font-size: 1rem;
+            min-height: 48px;
             padding: 12px;
             border: none;
             border-radius: var(--radius-md);
             cursor: pointer;
-            margin-top: 10px;
-            transition: all 0.1s ease;
+            margin-top: 8px;
         }
 
         .checklist-close-btn:active {
-            transform: translateY(2px);
+            opacity: 0.9;
         }
 
         /* 🧾 실시간 지출 장부 (가계부) 스타일 */
         .expense-card {
-            margin: 0 16px 20px 16px;
+            margin: 0 12px 16px 12px;
             background: var(--bg-surface);
             border: 2px solid var(--border-strong);
             border-radius: var(--radius-lg);
-            padding: 16px 18px;
+            padding: 14px 16px;
             box-shadow: var(--shadow-2);
         }
 
@@ -419,23 +422,23 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .expense-header h3 {
             font-family: var(--font-display);
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             color: var(--fg-1);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         .expense-total-badge {
             background-color: var(--primary-tint);
             color: oklch(0.35 0.12 184);
             font-family: var(--font-h1);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             padding: 4px 10px;
             border-radius: var(--radius-pill);
             border: 1px solid oklch(0.80 0.10 178);
@@ -445,22 +448,22 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             background-color: var(--bg-subtle);
-            padding: 12px;
+            padding: 10px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-1);
         }
 
         .expense-input-row {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
 
         .expense-place {
             flex: 1.2;
-            padding: 8px 10px;
-            font-size: 0.9rem;
+            padding: 10px 10px;
+            font-size: 16px; /* 모바일 자동 확대 방지 */
             font-family: var(--font-body);
             border: 1.5px solid var(--border-2);
             border-radius: var(--radius-sm);
@@ -471,8 +474,8 @@
 
         .expense-amount {
             flex: 1;
-            padding: 8px 10px;
-            font-size: 0.9rem;
+            padding: 10px 10px;
+            font-size: 16px; /* 모바일 자동 확대 방지 */
             font-family: var(--font-body);
             border: 1.5px solid var(--border-2);
             border-radius: var(--radius-sm);
@@ -485,7 +488,8 @@
             background-color: var(--primary);
             color: var(--fg-1);
             font-family: var(--font-h1);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            min-height: 44px;
             padding: 10px;
             border: 1.5px solid var(--border-strong);
             border-radius: var(--radius-sm);
@@ -502,7 +506,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
         }
 
@@ -525,7 +529,7 @@
 
         .expense-item-place {
             font-family: var(--font-h1);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--fg-1);
         }
 
@@ -537,12 +541,12 @@
         .expense-item-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .expense-item-price {
             font-family: var(--font-h1);
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--red);
         }
 
@@ -552,22 +556,11 @@
             color: var(--fg-3);
             font-size: 0.8rem;
             cursor: pointer;
-            padding: 2px 6px;
-        }
-
-        .expense-delete-btn:hover {
-            color: var(--red);
-        }
-
-        .empty-expense {
-            text-align: center;
-            color: var(--fg-3);
-            font-size: 0.85rem;
-            padding: 15px 0;
+            padding: 4px 6px;
         }
 
         .container {
-            max-width: 640px;
+            max-width: 480px; /* 모바일 세로 모드에 최적화 */
             margin: 0 auto;
             position: relative;
             z-index: 1;
@@ -575,11 +568,11 @@
 
         .mint-header {
             background-color: var(--primary);
-            padding: 28px 20px 24px 20px;
+            padding: 24px 16px 20px 16px;
             border-bottom-left-radius: var(--radius-xl);
             border-bottom-right-radius: var(--radius-xl);
             box-shadow: var(--shadow-2);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             color: var(--fg-1);
         }
 
@@ -593,28 +586,27 @@
         .role-title {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .role-title strong {
             font-family: var(--font-h1);
-            font-size: 1.4rem;
+            font-size: 1.25rem;
         }
 
         .role-title span {
             font-family: var(--font-body);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .badge-club {
             background-color: var(--fg-1);
             color: var(--primary);
             font-family: var(--font-h1);
-            font-size: 11px;
-            padding: 3px 8px;
+            font-size: 10px;
+            padding: 2px 6px;
             border-radius: 4px;
-            letter-spacing: -0.2px;
         }
 
         /* 디데이 뱃지 스타일 */
@@ -622,31 +614,29 @@
             background-color: var(--red);
             color: #ffffff;
             font-family: var(--font-h1);
-            font-size: 11px;
-            padding: 3px 8px;
+            font-size: 10px;
+            padding: 3px 7px;
             border-radius: 4px;
-            letter-spacing: -0.2px;
             box-shadow: 0 2px 4px oklch(0 0 0 / 0.15);
         }
 
         .mint-header h1 {
             font-family: var(--font-display);
-            font-size: 2.1rem;
-            line-height: 1.15;
-            margin-bottom: 8px;
-            word-break: keep-all;
+            font-size: 1.75rem;
+            line-height: 1.2;
+            margin-bottom: 6px;
         }
 
         .mint-header p {
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             color: oklch(0.30 0 0);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .search-bar {
             background-color: var(--bg-surface);
             border-radius: var(--radius-pill);
-            padding: 12px 20px;
+            padding: 10px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -654,7 +644,7 @@
             border: 2px solid var(--border-strong);
             text-decoration: none;
             cursor: pointer;
-            transition: transform 0.1s ease;
+            min-height: 46px;
         }
 
         .search-bar:active {
@@ -662,56 +652,52 @@
         }
 
         .search-bar .placeholder {
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             font-weight: 600;
             color: var(--fg-2);
         }
 
         .search-bar .search-icon {
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: var(--fg-1);
+            font-size: 1.1rem;
         }
 
         .service-cards {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin: 0 16px 20px 16px;
+            gap: 6px;
+            margin: 0 12px 16px 12px;
         }
 
         .service-card {
             background: var(--bg-surface);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-md);
             border: 1px solid var(--border-1);
-            padding: 12px;
-            min-height: 96px;
+            padding: 10px 8px;
+            min-height: 90px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             box-shadow: var(--shadow-1);
             cursor: pointer;
-            transition: transform 0.1s ease;
             text-decoration: none;
             color: inherit;
         }
 
         .service-card:active {
-            transform: scale(0.98);
+            transform: scale(0.96);
         }
 
         .service-card .title {
             font-family: var(--font-body);
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: var(--fg-1);
         }
 
         .service-card .sub {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--fg-3);
-            line-height: 1.3;
-            white-space: pre-line;
+            line-height: 1.2;
             margin-top: 2px;
         }
 
@@ -722,14 +708,14 @@
 
         .service-card .illust-icon {
             align-self: flex-end;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         .tab-bar-scroll {
             display: flex;
             background: var(--bg-surface);
-            padding: 8px 16px;
-            margin: 0 16px 20px 16px;
+            padding: 6px 8px;
+            margin: 0 12px 16px 12px;
             border-radius: var(--radius-pill);
             box-shadow: var(--shadow-1);
             border: 1px solid var(--border-1);
@@ -739,25 +725,24 @@
             flex: 1;
             background: transparent;
             border: none;
-            padding: 12px 0;
+            padding: 10px 0;
             font-family: var(--font-display);
-            font-size: 1.05rem;
+            font-size: 0.98rem;
             color: var(--fg-3);
             cursor: pointer;
             border-radius: var(--radius-pill);
-            transition: all 0.2s ease;
             text-align: center;
         }
 
         .tab-btn.active {
             background-color: var(--fg-1);
             color: #ffffff;
-            box-shadow: 0 4px 10px oklch(0.18 0 0 / 0.2);
+            box-shadow: 0 3px 8px oklch(0.18 0 0 / 0.15);
         }
 
         .day-section {
             display: none;
-            padding: 0 16px;
+            padding: 0 12px;
         }
 
         .day-section.active {
@@ -766,13 +751,13 @@
 
         .timeline {
             position: relative;
-            padding-left: 18px;
+            padding-left: 14px;
         }
 
         .timeline::before {
             content: '';
             position: absolute;
-            left: 6px;
+            left: 4px;
             top: 15px;
             bottom: 15px;
             width: 3px;
@@ -782,9 +767,9 @@
 
         .timeline-item {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             background: var(--bg-surface);
-            padding: 18px;
+            padding: 14px;
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-2);
             border: 1px solid var(--border-1);
@@ -793,10 +778,10 @@
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: -19px;
-            top: 22px;
-            width: 10px;
-            height: 10px;
+            left: -15px;
+            top: 20px;
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
             background-color: var(--primary);
             border: 2px solid var(--fg-1);
@@ -806,16 +791,15 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .tag-discount {
             background-color: var(--red);
             color: #ffffff;
-            font-family: var(--font-body);
             font-weight: 700;
-            font-size: 11px;
-            padding: 2px 8px;
+            font-size: 10px;
+            padding: 2px 7px;
             border-radius: var(--radius-pill);
         }
 
@@ -823,8 +807,8 @@
             background-color: var(--primary-tint);
             color: oklch(0.40 0.07 191);
             font-weight: 700;
-            font-size: 11px;
-            padding: 2px 8px;
+            font-size: 10px;
+            padding: 2px 7px;
             border-radius: var(--radius-pill);
         }
 
@@ -832,28 +816,27 @@
             display: inline-block;
             background-color: var(--bg-subtle);
             color: var(--fg-2);
-            font-family: var(--font-body);
             font-weight: 700;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            margin-bottom: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
         }
 
         .title {
             font-family: var(--font-display);
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             color: var(--fg-1);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .rating-meta {
-            font-size: 0.88rem;
+            font-size: 0.8rem;
             color: var(--fg-2);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
 
         .rating-meta .star {
@@ -861,10 +844,10 @@
         }
 
         .desc {
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             color: var(--fg-2);
-            margin-bottom: 12px;
-            line-height: 1.5;
+            margin-bottom: 8px;
+            line-height: 1.45;
         }
 
         .image-wrapper {
@@ -872,12 +855,12 @@
             width: 100%;
             border-radius: var(--radius-md);
             overflow: hidden;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .place-img {
             width: 100%;
-            height: 220px;
+            height: 180px; /* 모바일 화면 높이에 맞춤 */
             object-fit: cover;
             background-color: var(--bg-subtle);
             display: block;
@@ -885,21 +868,20 @@
 
         .club-mini-badge {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
+            bottom: 8px;
+            left: 8px;
             background-color: var(--primary);
             color: var(--fg-1);
             font-family: var(--font-h1);
-            font-size: 10px;
-            padding: 3px 8px;
+            font-size: 9px;
+            padding: 2px 6px;
             border-radius: 4px;
-            box-shadow: 0 2px 6px oklch(0 0 0 / 0.15);
         }
 
         /* 탭 전환형 하단 이동 버튼 스타일 */
         .switch-day-wrapper {
             text-align: center;
-            margin: 24px 0 10px 0;
+            margin: 20px 0 10px 0;
         }
 
         .btn-switch-day {
@@ -910,32 +892,26 @@
             background-color: var(--bg-surface);
             color: var(--fg-1);
             font-family: var(--font-display);
-            font-size: 1rem;
-            padding: 12px 24px;
+            font-size: 0.95rem;
+            min-height: 46px;
+            padding: 10px 20px;
             border-radius: var(--radius-pill);
             border: 2px solid var(--border-strong);
             box-shadow: var(--shadow-2);
             cursor: pointer;
-            transition: all 0.2s ease;
         }
 
         .btn-switch-day:active {
             transform: translateY(2px);
-            box-shadow: var(--shadow-1);
             background-color: var(--primary-tint);
         }
 
-        .btn-switch-day .arrow {
-            font-size: 0.9rem;
-            color: var(--primary-hover);
-        }
-
         .ad-banner-dark {
-            margin: 20px 16px;
+            margin: 16px 12px;
             background-color: var(--bg-inverse);
             color: #ffffff;
             border-radius: var(--radius-md);
-            padding: 16px 20px;
+            padding: 14px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -944,7 +920,7 @@
 
         .ad-banner-dark .text {
             font-family: var(--font-display);
-            font-size: 1.05rem;
+            font-size: 0.95rem;
         }
 
         .ad-banner-dark .text strong {
@@ -955,20 +931,19 @@
             background-color: var(--primary);
             color: var(--fg-1);
             font-family: var(--font-h1);
-            font-size: 0.85rem;
-            padding: 8px 16px;
+            font-size: 0.8rem;
+            padding: 6px 12px;
             border-radius: var(--radius-pill);
             border: none;
-            cursor: pointer;
         }
 
         footer {
             text-align: center;
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 24px;
+            padding: 16px;
             color: var(--fg-3);
             font-family: var(--font-display);
-            font-size: 0.95rem;
+            font-size: 0.88rem;
         }
     </style>
 </head>
