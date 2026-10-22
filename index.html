@@ -11,6 +11,10 @@
     <meta property="og:image" content="자장.jpeg">
     <meta property="og:url" content="">
 
+    <!-- Firebase SDK (실시간 데이터베이스 연동) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         @font-face {
             font-family: 'BM DOHYEON';
@@ -1403,7 +1407,22 @@
 </div>
 
 <script>
-    // 🧾 실시간 지출 장부(가계부) 관리 함수
+    // Firebase 초기화 설정
+    const firebaseConfig = {
+        apiKey: "AIzaSyDUu5uzh1RK52_IqCeL7IQXk4wCSu4dOAo",
+        authDomain: "gunsan-58d1b.firebaseapp.com",
+        databaseURL: "https://gunsan-58d1b-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "gunsan-58d1b",
+        storageBucket: "gunsan-58d1b.firebasestorage.app",
+        messagingSenderId: "922199239137",
+        appId: "1:922199239137:web:379b4e923b1c4163fc0aa0",
+        measurementId: "G-ZW4ED4Y5RD"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 🧾 실시간 지출 장부(가계부) 관리 함수 (Firebase 연동)
     function addExpenseItem() {
         const placeEl = document.getElementById('expense-place');
         const amountEl = document.getElementById('expense-amount');
@@ -1423,8 +1442,6 @@
             return;
         }
 
-        const expenses = JSON.parse(localStorage.getItem('travelExpenses') || '[]');
-        
         const now = new Date();
         const month = now.getMonth() + 1;
         const date = now.getDate();
@@ -1432,57 +1449,72 @@
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const dateStr = `${month}/${date} ${hours}:${minutes}`;
 
-        expenses.unshift({ id: Date.now(), place, amount, date: dateStr });
-        localStorage.setItem('travelExpenses', JSON.stringify(expenses));
-
-        placeEl.value = '';
-        amountEl.value = '';
-        renderExpenses();
+        const newId = 'exp_' + Date.now();
+        db.ref('travelExpenses/' + newId).set({
+            id: newId,
+            place: place,
+            amount: amount,
+            date: dateStr
+        }).then(() => {
+            placeEl.value = '';
+            amountEl.value = '';
+        }).catch((error) => {
+            console.error("지출 등록 실패:", error);
+            alert("지출 등록 중 오류가 발생했습니다.");
+        });
     }
 
     function deleteExpenseItem(id) {
         if (confirm("이 지출 내역을 삭제하시겠습니까?")) {
-            let expenses = JSON.parse(localStorage.getItem('travelExpenses') || '[]');
-            expenses = expenses.filter(item => item.id !== id);
-            localStorage.setItem('travelExpenses', JSON.stringify(expenses));
-            renderExpenses();
+            db.ref('travelExpenses/' + id).remove().catch((error) => {
+                console.error("지출 삭제 실패:", error);
+                alert("삭제 중 오류가 발생했습니다.");
+            });
         }
     }
 
-    function renderExpenses() {
+    // 실시간 지출 장부 데이터 감지 리스너
+    function initRealtimeExpenses() {
         const listEl = document.getElementById('expense-list');
         const totalSumEl = document.getElementById('expense-total-sum');
-        const expenses = JSON.parse(localStorage.getItem('travelExpenses') || '[]');
 
-        let totalSum = 0;
-        expenses.forEach(item => {
-            totalSum += Number(item.amount) || 0;
+        db.ref('travelExpenses').on('value', (snapshot) => {
+            const data = snapshot.val();
+            let expenses = [];
+            let totalSum = 0;
+
+            if (data) {
+                expenses = Object.values(data).reverse(); // 최신순 정렬
+                expenses.forEach(item => {
+                    totalSum += Number(item.amount) || 0;
+                });
+            }
+
+            if (totalSumEl) {
+                totalSumEl.textContent = `총 지출: ${totalSum.toLocaleString()}원`;
+            }
+
+            if (expenses.length === 0) {
+                listEl.innerHTML = '<div class="empty-expense">아직 등록된 지출 내역이 없습니다.</div>';
+                return;
+            }
+
+            listEl.innerHTML = expenses.map(item => `
+                <div class="expense-item">
+                    <div class="expense-item-info">
+                        <span class="expense-item-place">${escapeHtml(item.place)}</span>
+                        <span class="expense-item-date">${item.date}</span>
+                    </div>
+                    <div class="expense-item-right">
+                        <span class="expense-item-price">${Number(item.amount).toLocaleString()}원</span>
+                        <button class="expense-delete-btn" onclick="deleteExpenseItem('${item.id}')">삭제</button>
+                    </div>
+                </div>
+            `).join('');
         });
-
-        if (totalSumEl) {
-            totalSumEl.textContent = `총 지출: ${totalSum.toLocaleString()}원`;
-        }
-
-        if (expenses.length === 0) {
-            listEl.innerHTML = '<div class="empty-expense">아직 등록된 지출 내역이 없습니다.</div>';
-            return;
-        }
-
-        listEl.innerHTML = expenses.map(item => `
-            <div class="expense-item">
-                <div class="expense-item-info">
-                    <span class="expense-item-place">${escapeHtml(item.place)}</span>
-                    <span class="expense-item-date">${item.date}</span>
-                </div>
-                <div class="expense-item-right">
-                    <span class="expense-item-price">${Number(item.amount).toLocaleString()}원</span>
-                    <button class="expense-delete-btn" onclick="deleteExpenseItem(${item.id})">삭제</button>
-                </div>
-            </div>
-        `).join('');
     }
 
-    // 📝 방명록 제어 및 데이터 저장/삭제 함수
+    // 📝 방명록 제어 및 데이터 저장/삭제 함수 (Firebase 연동)
     function openGuestbook() {
         document.getElementById('guestbook-modal').style.display = 'flex';
         
@@ -1491,8 +1523,6 @@
         if (savedName && nicknameInput && !nicknameInput.value) {
             nicknameInput.value = savedName;
         }
-
-        renderGuestbook();
     }
 
     function closeGuestbook() {
@@ -1518,8 +1548,6 @@
             return;
         }
 
-        const entries = JSON.parse(localStorage.getItem('guestbookEntries') || '[]');
-        
         const now = new Date();
         const month = now.getMonth() + 1;
         const date = now.getDate();
@@ -1527,52 +1555,68 @@
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const dateStr = `${month}/${date} ${hours}:${minutes}`;
 
-        entries.unshift({ id: Date.now(), nickname, message, date: dateStr });
-        localStorage.setItem('guestbookEntries', JSON.stringify(entries));
-
-        messageEl.value = '';
-        renderGuestbook();
+        const newId = 'gb_' + Date.now();
+        db.ref('guestbookEntries/' + newId).set({
+            id: newId,
+            nickname: nickname,
+            message: message,
+            date: dateStr
+        }).then(() => {
+            messageEl.value = '';
+        }).catch((error) => {
+            console.error("방명록 등록 실패:", error);
+            alert("방명록 등록 중 오류가 발생했습니다.");
+        });
     }
 
     function deleteGuestbookEntry(id) {
         if (confirm("이 방명록 글을 삭제하시겠습니까?")) {
-            let entries = JSON.parse(localStorage.getItem('guestbookEntries') || '[]');
-            entries = entries.filter(entry => entry.id !== id);
-            localStorage.setItem('guestbookEntries', JSON.stringify(entries));
-            renderGuestbook();
+            db.ref('guestbookEntries/' + id).remove().catch((error) => {
+                console.error("방명록 삭제 실패:", error);
+                alert("삭제 중 오류가 발생했습니다.");
+            });
         }
     }
 
-    function renderGuestbook() {
+    // 실시간 방명록 데이터 감지 리스너
+    function initRealtimeGuestbook() {
         const gbListEl = document.getElementById('gb-list');
         const gbCardStatusEl = document.getElementById('gb-card-status');
-        const entries = JSON.parse(localStorage.getItem('guestbookEntries') || '[]');
 
-        if (gbCardStatusEl) {
-            if (entries.length > 0) {
-                gbCardStatusEl.textContent = `글 ${entries.length}개 등록됨`;
-            } else {
-                gbCardStatusEl.textContent = `소감 한마디 남기기`;
+        db.ref('guestbookEntries').on('value', (snapshot) => {
+            const data = snapshot.val();
+            let entries = [];
+
+            if (data) {
+                entries = Object.values(data).reverse(); // 최신순 정렬
             }
-        }
 
-        if (entries.length === 0) {
-            gbListEl.innerHTML = '<div class="empty-gb">아직 작성된 방명록이 없습니다.<br>첫 번째 한마디를 남겨보세요! 🎈</div>';
-            return;
-        }
+            if (gbCardStatusEl) {
+                if (entries.length > 0) {
+                    gbCardStatusEl.textContent = `글 ${entries.length}개 등록됨`;
+                } else {
+                    gbCardStatusEl.textContent = `소감 한마디 남기기`;
+                }
+            }
 
-        gbListEl.innerHTML = entries.map(entry => `
-            <div class="gb-card">
-                <div class="gb-card-header">
-                    <span class="gb-author">${escapeHtml(entry.nickname)}</span>
-                    <div class="gb-header-right">
-                        <span class="gb-date">${entry.date}</span>
-                        <button class="gb-delete-btn" onclick="deleteGuestbookEntry(${entry.id})">삭제</button>
+            if (entries.length === 0) {
+                gbListEl.innerHTML = '<div class="empty-gb">아직 작성된 방명록이 없습니다.<br>첫 번째 한마디를 남겨보세요! 🎈</div>';
+                return;
+            }
+
+            gbListEl.innerHTML = entries.map(entry => `
+                <div class="gb-card">
+                    <div class="gb-card-header">
+                        <span class="gb-author">${escapeHtml(entry.nickname)}</span>
+                        <div class="gb-header-right">
+                            <span class="gb-date">${entry.date}</span>
+                            <button class="gb-delete-btn" onclick="deleteGuestbookEntry('${entry.id}')">삭제</button>
+                        </div>
                     </div>
+                    <div class="gb-text">${escapeHtml(entry.message)}</div>
                 </div>
-                <div class="gb-text">${escapeHtml(entry.message)}</div>
-            </div>
-        `).join('');
+            `).join('');
+        });
     }
 
     function escapeHtml(str) {
@@ -1742,8 +1786,8 @@
         updateDday();
         fetchGunsanWeather();
         loadChecklistState();
-        renderGuestbook();
-        renderExpenses();
+        initRealtimeGuestbook();
+        initRealtimeExpenses();
 
         const savedName = localStorage.getItem('userName');
         if (savedName) {
