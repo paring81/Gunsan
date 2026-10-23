@@ -327,7 +327,7 @@
             font-size: 0.8rem;
             cursor: pointer;
             font-weight: bold;
-            padding: 4px;
+            padding: 2px 4px;
         }
 
         .gb-text {
@@ -455,14 +455,16 @@
             border: 1px solid var(--border-1);
         }
 
-        .expense-input-row {
+        /* 수직 일렬 배치 스타일 */
+        .expense-input-column {
             display: flex;
-            gap: 6px;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .expense-place {
-            flex: 1.2;
-            padding: 10px 10px;
+        .expense-place, .expense-amount {
+            width: 100%;
+            padding: 10px 12px;
             font-size: 16px; /* 모바일 자동 확대 방지 */
             font-family: var(--font-body);
             border: 1.5px solid var(--border-2);
@@ -473,14 +475,6 @@
         }
 
         .expense-amount {
-            flex: 1;
-            padding: 10px 10px;
-            font-size: 16px; /* 모바일 자동 확대 방지 */
-            font-family: var(--font-body);
-            border: 1.5px solid var(--border-2);
-            border-radius: var(--radius-sm);
-            outline: none;
-            background-color: var(--bg-surface);
             font-weight: 700;
         }
 
@@ -1098,7 +1092,7 @@
         </div>
 
         <div class="expense-form">
-            <div class="expense-input-row">
+            <div class="expense-input-column">
                 <input type="text" id="expense-place" class="expense-place" placeholder="사용 장소 (예: 태성반점)">
                 <input type="number" id="expense-amount" class="expense-amount" placeholder="금액 (원)" onkeypress="if(event.key==='Enter') addExpenseItem()">
             </div>
@@ -1397,7 +1391,19 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 🧾 실시간 지출 장부(가계부) 관리 함수 (Firebase 연동)
+    // 🔑 사용자 고유 ID(기기 식별자) 생성 및 로드
+    function getUserId() {
+        let userId = localStorage.getItem('user_unique_id');
+        if (!userId) {
+            userId = 'uid_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+            localStorage.setItem('user_unique_id', userId);
+        }
+        return userId;
+    }
+
+    const currentUserId = getUserId();
+
+    // 🧾 실시간 지출 장부(가계부) 관리 함수 (본인 삭제 권한 적용)
     function addExpenseItem() {
         const placeEl = document.getElementById('expense-place');
         const amountEl = document.getElementById('expense-amount');
@@ -1429,7 +1435,8 @@
             id: newId,
             place: place,
             amount: amount,
-            date: dateStr
+            date: dateStr,
+            userId: currentUserId
         }).then(() => {
             placeEl.value = '';
             amountEl.value = '';
@@ -1439,7 +1446,12 @@
         });
     }
 
-    function deleteExpenseItem(id) {
+    function deleteExpenseItem(id, itemUserId) {
+        if (itemUserId && itemUserId !== currentUserId) {
+            alert("본인이 작성한 내역만 삭제할 수 있습니다.");
+            return;
+        }
+
         if (confirm("이 지출 내역을 삭제하시겠습니까?")) {
             db.ref('travelExpenses/' + id).remove().catch((error) => {
                 console.error("지출 삭제 실패:", error);
@@ -1474,22 +1486,29 @@
                 return;
             }
 
-            listEl.innerHTML = expenses.map(item => `
-                <div class="expense-item">
-                    <div class="expense-item-info">
-                        <span class="expense-item-place">${escapeHtml(item.place)}</span>
-                        <span class="expense-item-date">${item.date}</span>
+            listEl.innerHTML = expenses.map(item => {
+                const isOwner = !item.userId || item.userId === currentUserId;
+                const deleteBtnHtml = isOwner 
+                    ? `<button class="expense-delete-btn" onclick="deleteExpenseItem('${item.id}', '${item.userId || ''}')">삭제</button>` 
+                    : '';
+
+                return `
+                    <div class="expense-item">
+                        <div class="expense-item-info">
+                            <span class="expense-item-place">${escapeHtml(item.place)}</span>
+                            <span class="expense-item-date">${item.date}</span>
+                        </div>
+                        <div class="expense-item-right">
+                            <span class="expense-item-price">${Number(item.amount).toLocaleString()}원</span>
+                            ${deleteBtnHtml}
+                        </div>
                     </div>
-                    <div class="expense-item-right">
-                        <span class="expense-item-price">${Number(item.amount).toLocaleString()}원</span>
-                        <button class="expense-delete-btn" onclick="deleteExpenseItem('${item.id}')">삭제</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         });
     }
 
-    // 📝 방명록 제어 및 데이터 저장/삭제 함수 (Firebase 연동)
+    // 📝 방명록 제어 및 데이터 저장/삭제 함수 (본인 삭제 권한 적용)
     function openGuestbook() {
         document.getElementById('guestbook-modal').style.display = 'flex';
         
@@ -1535,7 +1554,8 @@
             id: newId,
             nickname: nickname,
             message: message,
-            date: dateStr
+            date: dateStr,
+            userId: currentUserId
         }).then(() => {
             messageEl.value = '';
         }).catch((error) => {
@@ -1544,7 +1564,12 @@
         });
     }
 
-    function deleteGuestbookEntry(id) {
+    function deleteGuestbookEntry(id, itemUserId) {
+        if (itemUserId && itemUserId !== currentUserId) {
+            alert("본인이 작성한 방명록만 삭제할 수 있습니다.");
+            return;
+        }
+
         if (confirm("이 방명록 글을 삭제하시겠습니까?")) {
             db.ref('guestbookEntries/' + id).remove().catch((error) => {
                 console.error("방명록 삭제 실패:", error);
@@ -1579,18 +1604,25 @@
                 return;
             }
 
-            gbListEl.innerHTML = entries.map(entry => `
-                <div class="gb-card">
-                    <div class="gb-card-header">
-                        <span class="gb-author">${escapeHtml(entry.nickname)}</span>
-                        <div class="gb-header-right">
-                            <span class="gb-date">${entry.date}</span>
-                            <button class="gb-delete-btn" onclick="deleteGuestbookEntry('${entry.id}')">삭제</button>
+            gbListEl.innerHTML = entries.map(entry => {
+                const isOwner = !entry.userId || entry.userId === currentUserId;
+                const deleteBtnHtml = isOwner 
+                    ? `<button class="gb-delete-btn" onclick="deleteGuestbookEntry('${entry.id}', '${entry.userId || ''}')">삭제</button>` 
+                    : '';
+
+                return `
+                    <div class="gb-card">
+                        <div class="gb-card-header">
+                            <span class="gb-author">${escapeHtml(entry.nickname)}</span>
+                            <div class="gb-header-right">
+                                <span class="gb-date">${entry.date}</span>
+                                ${deleteBtnHtml}
+                            </div>
                         </div>
+                        <div class="gb-text">${escapeHtml(entry.message)}</div>
                     </div>
-                    <div class="gb-text">${escapeHtml(entry.message)}</div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         });
     }
 
@@ -1647,26 +1679,6 @@
             }
         }
         updateChecklistSummary();
-    }
-
-    function updateChecklistSummary() {
-        let checkedCount = 0;
-        const total = 9;
-        for (let i = 1; i <= total; i++) {
-            const cb = document.getElementById(`c${i}`);
-            if (cb && cb.checked) checkedCount++;
-        }
-
-        const statusEl = document.getElementById('checklist-card-status');
-        if (statusEl) {
-            if (checkedCount === total) {
-                statusEl.textContent = `준비완료! (9/9)`;
-            } else if (checkedCount > 0) {
-                statusEl.textContent = `챙기는 중 (${checkedCount}/${total})`;
-            } else {
-                statusEl.textContent = `터치해서 체크!`;
-            }
-        }
     }
 
     // 🌤️ 군산 실시간 날씨 연동 함수 (Open-Meteo API 사용)
